@@ -6,6 +6,14 @@ Xây dựng hệ thống multi-agent điều tra khiếu nại thương mại đ
 
 Ngoài kết luận nghiệp vụ, yêu cầu cần phải xử lý xử lý entity resolution, customer context, shipment/payment analysis, source conflict và hiệu quả sử dụng MCP.
 
+## Dữ liệu
+
+Tham khảo dữ liệu tại: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
+
+## Quy tắc đặt tên
+
+Làm nhóm hoặc cá nhân, khi fork về các bạn giữ nguyên tên gốc repo, không đổi tên
+
 ## 1. Cài đặt
 
 Yêu cầu Python 3.11 trở lên.
