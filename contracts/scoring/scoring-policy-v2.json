@@ -1,0 +1,62 @@
+{
+  "policy_version": "day09-scoring-v2",
+  "score_range": [0, 100],
+  "case_aggregation": "arithmetic_mean",
+  "variant_weights": {
+    "l3a": {
+      "semantic": 0.45,
+      "evidence": 0.15,
+      "provenance": 0.15,
+      "consistency": 0.10,
+      "schema": 0.05,
+      "calibration": 0.05,
+      "workflow": 0.05,
+      "efficiency": 0.00
+    },
+    "l3b": {
+      "semantic": 0.40,
+      "evidence": 0.15,
+      "provenance": 0.15,
+      "consistency": 0.10,
+      "schema": 0.05,
+      "calibration": 0.05,
+      "workflow": 0.05,
+      "efficiency": 0.05
+    }
+  },
+  "components": {
+    "semantic": "Mean satisfaction of private allowed-value, set and numeric-tolerance constraints.",
+    "evidence": "F1 of required evidence-group coverage and relevant evidence precision, with forbidden-domain penalties.",
+    "provenance": "All submitted evidence refs must exist in MCP audit and match team, run and case.",
+    "consistency": "Deterministic cross-field checks for status/refund/action, seller responsibility and duplicate actions.",
+    "schema": "Full public JSON Schema compliance.",
+    "calibration": "One minus squared error between primary-issue correctness and submitted confidence.",
+    "workflow": "Mean of lifecycle-event coverage, receive/finalize ordering, actor collaboration and evidence-to-trace linkage.",
+    "efficiency": "Full credit through the private per-case call budget, then linear decay to zero at maximum calls; all MCP-audited calls count."
+  },
+  "workflow_required_events": [
+    "case_received",
+    "task_assigned",
+    "handoff",
+    "verification_completed",
+    "case_finalized"
+  ],
+  "hard_gates": [
+    "case_id_mismatch",
+    "unscorable_schema",
+    "missing_required_evidence",
+    "invalid_evidence_refs",
+    "unknown_evidence_ref",
+    "cross_scope_evidence_ref"
+  ],
+  "final_leaderboard": {
+    "public_weight": 0.20,
+    "private_weight": 0.80,
+    "submission_selection": "best score among team-selected final submissions for the competition"
+  },
+  "feedback_visibility": {
+    "before_finalize": "public-partition aggregate score and public component breakdown",
+    "after_finalize": "weighted final score: 20% public partition and 80% private partition",
+    "never_public": ["oracle", "case-level score", "reference output", "private report"]
+  }
+}

@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "day09-l3b-student-agent"
+version = "0.1.0"
+description = "Starter kit for the Day09 L3B Multi-Agent MCP + A2A competition"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx2>=2,<3",
+    "jsonschema[format]>=4.25,<5",
+    "mcp>=2,<3",
+    "python-dotenv>=1.1,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.4,<9", "ruff>=0.12,<1"]
+
+[project.scripts]
+day09 = "student_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

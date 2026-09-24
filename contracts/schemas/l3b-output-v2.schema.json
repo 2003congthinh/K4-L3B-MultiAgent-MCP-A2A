@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://day09.vinaction.local/contracts/l3b-output-v2.schema.json",
+  "title": "Day09 L3B case output V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "assessment", "affected_entities",
+    "entity_resolution", "customer_context", "shipment_analysis",
+    "payment_analysis", "root_cause_analysis", "evidence_refs",
+    "data_conflicts", "financial_resolution", "resolution_actions"
+  ],
+  "properties": {
+    "schema_version": {"const": "day09-l3b-output-v2"},
+    "case_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"},
+    "assessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary_issue", "secondary_issues", "case_status", "confidence"],
+      "properties": {
+        "primary_issue": {"$ref": "l3a-output-v2.schema.json#/$defs/primaryIssue"},
+        "secondary_issues": {
+          "type": "array", "maxItems": 10, "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 80}
+        },
+        "case_status": {"enum": ["action_required", "no_action", "needs_investigation"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "affected_entities": {"$ref": "l3a-output-v2.schema.json#/$defs/entities"},
+    "claim_assessments": {
+      "type": "array", "maxItems": 5,
+      "items": {"$ref": "l3a-output-v2.schema.json#/$defs/claimAssessment"}
+    },
+    "entity_resolution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "resolved_order_ids", "rejected_candidates", "confidence"],
+      "properties": {
+        "status": {"enum": ["resolved", "ambiguous", "not_found"]},
+        "resolved_order_ids": {"$ref": "l3a-output-v2.schema.json#/$defs/idSet"},
+        "rejected_candidates": {"$ref": "l3a-output-v2.schema.json#/$defs/idSet"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "customer_context": {
+      "type": "object", "additionalProperties": false,
+      "required": ["customer_unique_id", "related_order_ids"],
+      "properties": {
+        "customer_unique_id": {"type": ["string", "null"], "maxLength": 128},
+        "related_order_ids": {"$ref": "l3a-output-v2.schema.json#/$defs/idSet"}
+      }
+    },
+    "shipment_analysis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verdict", "late_seller_ids", "timeline_complete"],
+      "properties": {
+        "verdict": {"enum": ["on_time", "seller_delay", "logistics_delay", "lost", "returned", "conflicting", "insufficient_evidence"]},
+        "late_seller_ids": {"$ref": "l3a-output-v2.schema.json#/$defs/idSet"},
+        "timeline_complete": {"type": "boolean"}
+      }
+    },
+    "payment_analysis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verdict", "captured_total_brl", "refunded_total_brl", "refundable_total_brl"],
+      "properties": {
+        "verdict": {"enum": ["reconciled", "capture_mismatch", "duplicate_capture", "refund_pending", "refund_failed", "refunded", "insufficient_evidence"]},
+        "captured_total_brl": {"type": ["number", "null"], "minimum": 0},
+        "refunded_total_brl": {"type": ["number", "null"], "minimum": 0},
+        "refundable_total_brl": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "root_cause_analysis": {"$ref": "l3a-output-v2.schema.json#/$defs/rootCause"},
+    "evidence_refs": {"$ref": "l3a-output-v2.schema.json#/$defs/evidenceRefs"},
+    "data_conflicts": {
+      "type": "array", "maxItems": 5,
+      "items": {"$ref": "l3a-output-v2.schema.json#/$defs/dataConflict"}
+    },
+    "financial_resolution": {"$ref": "l3a-output-v2.schema.json#/$defs/financialResolution"},
+    "resolution_actions": {
+      "type": "array", "maxItems": 8, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 80}
+    }
+  }
+}

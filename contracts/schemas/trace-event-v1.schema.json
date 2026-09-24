@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://day09.vinaction.local/contracts/trace-event-v1.schema.json",
+  "title": "Day09 observable trace event V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "case_id", "event_type", "occurred_at", "actor"],
+  "properties": {
+    "schema_version": {"const": "day09-trace-event-v1"},
+    "event_id": {"type": "string", "pattern": "^evt_[A-Za-z0-9_-]{12,96}$"},
+    "case_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"},
+    "event_type": {
+      "enum": [
+        "case_received",
+        "task_assigned",
+        "tool_result_consumed",
+        "handoff",
+        "policy_decided",
+        "verification_completed",
+        "case_finalized"
+      ]
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor": {"type": "string", "minLength": 1, "maxLength": 80},
+    "target": {"type": ["string", "null"], "maxLength": 80},
+    "decision_code": {"type": ["string", "null"], "maxLength": 80},
+    "tool_name": {"type": ["string", "null"], "maxLength": 80},
+    "evidence_refs": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {"type": "string", "pattern": "^ev_[A-Za-z0-9_-]{20,96}$"},
+      "uniqueItems": true
+    },
+    "attributes": {
+      "type": "object",
+      "maxProperties": 20,
+      "additionalProperties": {"type": ["string", "number", "integer", "boolean", "null"]}
+    }
+  }
+}

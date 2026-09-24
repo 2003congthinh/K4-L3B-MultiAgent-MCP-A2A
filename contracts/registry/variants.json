@@ -1,0 +1,27 @@
+{
+  "contract_registry_version": "day09-contract-registry-v2",
+  "competition_id": "day09-multiagent-mcp-a2a",
+  "variants": {
+    "l3a": {
+      "title": "K4 L3A Multi-Agent MCP A2A",
+      "output_schema": "schemas/l3a-output-v2.schema.json",
+      "scored_case_count": {
+        "public": 50,
+        "private": 50
+      },
+      "tool_profile": "l3a"
+    },
+    "l3b": {
+      "title": "K4 L3B Multi-Agent MCP A2A",
+      "output_schema": "schemas/l3b-output-v2.schema.json",
+      "scored_case_count": {
+        "public": 50,
+        "private": 50
+      },
+      "tool_profile": "l3b"
+    }
+  },
+  "lifecycle": ["draft", "scheduled", "open", "closed", "finalized"],
+  "case_count": 100,
+  "partition_visibility": "server-only"
+}

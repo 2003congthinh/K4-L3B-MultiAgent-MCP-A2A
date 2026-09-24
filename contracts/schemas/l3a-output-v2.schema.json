@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://day09.vinaction.local/contracts/l3a-output-v2.schema.json",
+  "title": "Day09 L3A case output V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "assessment", "affected_entities",
+    "root_cause_analysis", "evidence_refs", "data_conflicts",
+    "financial_resolution", "resolution_actions"
+  ],
+  "properties": {
+    "schema_version": {"const": "day09-l3a-output-v2"},
+    "case_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{2,63}$"},
+    "assessment": {"$ref": "#/$defs/assessment"},
+    "affected_entities": {"$ref": "#/$defs/entities"},
+    "claim_assessments": {
+      "type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/claimAssessment"}
+    },
+    "root_cause_analysis": {"$ref": "#/$defs/rootCause"},
+    "evidence_refs": {"$ref": "#/$defs/evidenceRefs"},
+    "data_conflicts": {
+      "type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/dataConflict"}
+    },
+    "financial_resolution": {"$ref": "#/$defs/financialResolution"},
+    "resolution_actions": {
+      "type": "array", "maxItems": 8, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 80}
+    }
+  },
+  "$defs": {
+    "primaryIssue": {
+      "enum": [
+        "canceled_order_paid", "unavailable_order_paid", "late_delivery_seller",
+        "late_delivery_logistics", "valid_split_payment", "payment_mismatch",
+        "duplicate_charge", "refund_pending", "refund_failed",
+        "unsupported_claim", "insufficient_evidence"
+      ]
+    },
+    "assessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary_issue", "case_status", "confidence"],
+      "properties": {
+        "primary_issue": {"$ref": "#/$defs/primaryIssue"},
+        "case_status": {"enum": ["action_required", "no_action", "needs_investigation"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "entities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["order_ids", "item_ids", "seller_ids", "payment_references", "shipment_ids"],
+      "properties": {
+        "order_ids": {"$ref": "#/$defs/idSet"},
+        "item_ids": {"$ref": "#/$defs/idSet"},
+        "seller_ids": {"$ref": "#/$defs/idSet"},
+        "payment_references": {"$ref": "#/$defs/idSet"},
+        "shipment_ids": {"$ref": "#/$defs/idSet"}
+      }
+    },
+    "idSet": {
+      "type": "array", "maxItems": 20, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+    },
+    "claimAssessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["claim_id", "verdict", "confidence", "evidence_refs"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1, "maxLength": 64},
+        "verdict": {"enum": ["supported", "unsupported", "partially_supported", "insufficient_evidence"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence_refs": {"$ref": "#/$defs/evidenceRefs"}
+      }
+    },
+    "rootCause": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ranked_causes", "responsible_parties"],
+      "properties": {
+        "ranked_causes": {
+          "type": "array", "maxItems": 5,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["cause_code", "rank"],
+            "properties": {
+              "cause_code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,79}$"},
+              "rank": {"type": "integer", "minimum": 1, "maximum": 5}
+            }
+          }
+        },
+        "responsible_parties": {
+          "type": "array", "maxItems": 5,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["party_type", "party_id"],
+            "properties": {
+              "party_type": {"enum": ["seller", "platform", "logistics_provider", "payment_provider", "customer", "unknown"]},
+              "party_id": {"type": ["string", "null"], "maxLength": 128}
+            }
+          }
+        }
+      }
+    },
+    "evidenceRefs": {
+      "type": "array", "maxItems": 30, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^ev_[A-Za-z0-9_-]{20,96}$"}
+    },
+    "dataConflict": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field", "sources", "selected_source", "resolution_code"],
+      "properties": {
+        "field": {"type": "string", "minLength": 1, "maxLength": 100},
+        "sources": {"type": "array", "minItems": 2, "maxItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 80}},
+        "selected_source": {"type": ["string", "null"], "maxLength": 80},
+        "resolution_code": {"type": "string", "minLength": 1, "maxLength": 80}
+      }
+    },
+    "financialResolution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["currency", "recommended_refund_brl", "refund_lines"],
+      "properties": {
+        "currency": {"const": "BRL"},
+        "recommended_refund_brl": {"type": "number", "minimum": 0},
+        "refund_lines": {
+          "type": "array", "maxItems": 10,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["reason_code", "amount_brl", "entity_id"],
+            "properties": {
+              "reason_code": {"type": "string", "minLength": 1, "maxLength": 80},
+              "amount_brl": {"type": "number", "minimum": 0},
+              "entity_id": {"type": ["string", "null"], "maxLength": 128}
+            }
+          }
+        }
+      }
+    }
+  }
+}
