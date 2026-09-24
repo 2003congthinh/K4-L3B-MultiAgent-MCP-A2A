@@ -1,4 +1,4 @@
-# K4 L3B — Advanced Multi-Agent MCP + A2A
+# K4 L3B — Multi-Agent MCP + A2A
 
 ## Mục tiêu
 
